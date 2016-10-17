@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	rv1 "gitlab.pramati.com/seshachalamm/fido/router/v1"
-	"gitlab.pramati.com/seshachalamm/fido/uaf"
+	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
 	"net/http"
 )
 
@@ -12,7 +12,7 @@ func main() {
 	e := echo.New()
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, uaf.FIDO_VERSION)
+		return c.String(http.StatusOK, msg.FIDO_VERSION)
 	})
 
 	v := e.Group("/v1/public")
@@ -23,18 +23,12 @@ func main() {
 	v.POST("/regResponse", rv1.RegResponse)
 
 	//Authentication
-	v.GET("/authRequest", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+	v.GET("/authRequest", rv1.AuthRequest)
 
-	v.POST("/authResponse", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+	v.POST("/authResponse", rv1.AuthResponse)
 
 	//Deregistration
-	v.POST("/deregRequest", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+	v.POST("/deregRequest", rv1.DeregRequest)
 
 	e.Run(standard.New(":1323"))
 }
