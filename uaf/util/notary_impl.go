@@ -8,7 +8,10 @@ import (
 
 const hmacSecret = "HMAC-is-just-one-way"
 
-func Sign(dataToSign string) string {
+type NotaryImpl struct {
+}
+
+func (n NotaryImpl) Sign(dataToSign string) string {
 	key := []byte(hmacSecret)
 	h := hmac.New(sha256.New, key)
 	h.Write([]byte(dataToSign))
@@ -16,7 +19,7 @@ func Sign(dataToSign string) string {
 	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
 
-func Verify(dataToSign string, signature string) bool {
+func (n NotaryImpl) Verify(dataToSign string, signature string) bool {
 	key := []byte(hmacSecret)
 	h := hmac.New(sha256.New, key)
 	h.Write([]byte(dataToSign))

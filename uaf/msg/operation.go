@@ -1,7 +1,7 @@
 package msg
 
 const (
-	Reg = iota
-	Auth
-	Dereg
+	Reg   = "Reg"
+	Auth  = "Auth"
+	Dereg = "Dereg"
 )

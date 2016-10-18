@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/ops"
+	"gitlab.pramati.com/seshachalamm/fido/uaf/util"
 	"net/http"
 )
 
@@ -14,7 +15,7 @@ func RegRequest(c echo.Context) error {
 
 	regReq := [1]msg.RegistrationRequest{}
 
-	regReq[0] = getRegistrationRequest(getAppID(), getAllowedAaids(), userName)
+	regReq[0] = getRegistrationRequest(userName, getAppID(), getAllowedAaids())
 
 	return c.JSON(200, regReq)
 }
@@ -53,6 +54,8 @@ func getAllowedAaids() []string {
 	return allowedAaids
 }
 
-func getRegistrationRequest() msg.RegistrationRequest {
-	return ops.CreateRegistrationRequest()
+func getRegistrationRequest(username, appID string, acceptedAaids []string) msg.RegistrationRequest {
+
+	notary := util.NotaryImpl{}
+	return ops.CreateRegistrationRequest(username, appID, acceptedAaids, notary)
 }
