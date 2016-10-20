@@ -22,7 +22,15 @@ func RegRequest(c echo.Context) error {
 
 //RegResponse serves registration response
 func RegResponse(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+	fromJSON := []msg.RegistrationResponse{}
+	err := c.Bind(&fromJSON)
+	if err != nil {
+		return err
+	}
+	registrationResponse := fromJSON[0]
+	result := ops.ProcessRegResponse(registrationResponse)
+
+	return c.JSON(result)
 }
 
 //AuthRequest serves auth response

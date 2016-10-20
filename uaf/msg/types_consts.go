@@ -1,5 +1,9 @@
 package msg
 
+import (
+	"errors"
+)
+
 //defines all the constants and types for uaf
 const (
 	FIDO_VERSION = "v1.0"
@@ -82,7 +86,66 @@ const (
 	TAG_EXTENSION_2                 = 0x3E12
 	TAG_EXTENSION_ID                = 0x2E13
 	TAG_EXTENSION_DATA              = 0x2E14
+
+	//UAF Status Codes
+	OPERATION_COMPLETED              = 1200
+	MESSAGE_ACCEPTED                 = 1202
+	BAD_REQUEST                      = 1400
+	UNAUTHORIZED                     = 1401
+	FORBIDDEN                        = 1403
+	NOT_FOUND                        = 1404
+	REQUEST_TIMEOUT                  = 1408
+	UNKOWN_AAID                      = 1480
+	UNKOWN_KEYID                     = 1481
+	CHANNEL_BINDING_REFUSED          = 1490
+	INVALID_REQUEST                  = 1491
+	UNACCEPTABLE_AUTHENTICATOR       = 1492
+	REVOKED_AUTHENTICATOR            = 1493
+	UNACCEPTABLE_KEY                 = 1494
+	UNACCEPTABLE_ALGORITHM           = 1495
+	UNACCEPTABLE_ATTESTATION         = 1496
+	UNACCEPTABLE_CLIENT_CAPABILITIES = 1497
+	UNACCEPTABLE_CONTENT             = 1498
+	INTERNAL_SERVER_ERROR            = 1500
 )
+
+//UAF Status Codes
+var statusCodes = map[int]string{
+	OPERATION_COMPLETED: `OK. Operation completed`,
+	MESSAGE_ACCEPTED: `Accepted. Message accepted, but not completed at this time. The RP may need time to process the attestation, run risk scoring, etc. The
+server should not send an authenticationToken with a 1202 response`,
+	BAD_REQUEST:     `Bad Request. The server did not understand the message`,
+	UNAUTHORIZED:    `Unauthorized. The userid must be authenticated to perform this operation, or this KeyID is not associated with this UserID.`,
+	FORBIDDEN:       `Forbidden. The userid is not allowed to perform this operation. Client should not retry`,
+	NOT_FOUND:       `Not Found.`,
+	REQUEST_TIMEOUT: `Request Timeout.`,
+	UNKOWN_AAID:     `Unknown AAID. The server was unable to locate authoritative metadata for the AAID.`,
+	UNKOWN_KEYID: `Unknown KeyID. The server was unable to locate a registration for the given UserID and KeyID combination.
+This error indicates that there is an invalid registration on the user's device. It is recommended that FIDO UAF Client deletes the key
+from local device when this error is received.`,
+	CHANNEL_BINDING_REFUSED: `Channel Binding Refused. The server refused to service the request due to a missing or mismatched channel binding(s).`,
+	INVALID_REQUEST: `Request Invalid. The server refused to service the request because the request message nonce was unknown, expired or the server has
+previously serviced a message with the same nonce and user ID.`,
+	UNACCEPTABLE_AUTHENTICATOR: `Unacceptable Authenticator. The authenticator is not acceptable according to the server's policy, for example because the capability
+registry used by the server reported different capabilities than client-side discovery.`,
+	REVOKED_AUTHENTICATOR: `Revoked Authenticator. The authenticator is considered revoked by the server.`,
+	UNACCEPTABLE_KEY:      `Unacceptable Key. The key used is unacceptable. Perhaps it is on a list of known weak keys or uses insecure parameter choices.`,
+	UNACCEPTABLE_ALGORITHM: `Unacceptable Algorithm. The server believes the authenticator to be capable of using a stronger mutually-agreeable algorithm than was
+presented in the request.`,
+	UNACCEPTABLE_ATTESTATION: `Unacceptable Attestation. The attestation(s) provided were not accepted by the server.`,
+	UNACCEPTABLE_CLIENT_CAPABILITIES: `Unacceptable Client Capabilities. The server was unable or unwilling to use required capabilities provided supplementally to the
+authenticator by the client software.`,
+	UNACCEPTABLE_CONTENT:  `Unacceptable Content. There was a problem with the contents of the message and the server was unwilling or unable to process it.`,
+	INTERNAL_SERVER_ERROR: `Internal Server Error`,
+}
+
+func UAFStatusCode(statusCode int) (string, error) {
+	if status, ok := statusCodes[statusCode]; ok {
+		return status, nil
+	}
+
+	return "", errors.New("Status code does not exist.")
+}
 
 type DOMString string
 

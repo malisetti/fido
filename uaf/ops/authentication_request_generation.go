@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/crypto"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
+	"gitlab.pramati.com/seshachalamm/fido/uaf/util"
 	"strconv"
 	"time"
 )
@@ -17,17 +18,17 @@ func CreateRegistrationRequest(username string, appID string, acceptedAaids []st
 }
 
 func generateChallenge() string {
-	b := make([]byte, 16)
+	b := make([]byte, 32)
 	rand.Read(b)
 
-	return base64.StdEncoding.EncodeToString(b)
+	return util.ToWebsafeBase64(base64.StdEncoding.EncodeToString(b))
 }
 
 func generateServerData(username, challenge string, notary crypto.Notary) string {
 	dataToSign := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(int(time.Now().UnixNano()/int64(time.Millisecond))))) + "." + base64.StdEncoding.EncodeToString([]byte(username)) + "." + base64.StdEncoding.EncodeToString([]byte(challenge))
 	signature := notary.Sign(dataToSign)
 
-	return base64.StdEncoding.EncodeToString([]byte(dataToSign + "." + signature))
+	return util.ToWebsafeBase64(base64.StdEncoding.EncodeToString([]byte(dataToSign + "." + signature)))
 }
 
 func createRegistrationRequest(username, serverData, challenge, appID string, acceptedAaids []string) msg.RegistrationRequest {
