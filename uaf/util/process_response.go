@@ -4,13 +4,12 @@ import (
 	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/ops"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/storage"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/util"
 )
 
 const SERVER_DATA_EXPIRY_IN_MS = 5 * 60 * 1000
 
 func ProcessRegResponse(resp msg.RegistrationResponse) []storage.RegistrationRecord {
-	notary := util.NotaryImpl{}
+	notary := NotaryImpl{}
 	result, err := ops.ProcessResponse(resp, SERVER_DATA_EXPIRY_IN_MS, notary)
 
 	if err != nil {

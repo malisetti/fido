@@ -10,12 +10,10 @@ import (
 
 //RegRequest serves registration request
 func RegRequest(c echo.Context) error {
-
 	userName := c.Param("username")
-
 	regReq := [1]msg.RegistrationRequest{}
-
-	regReq[0] = getRegistrationRequest(userName, getAppID(), getAllowedAaids())
+	fetchRequest := util.FetchRequest{getAppID(), getAllowedAaids()}
+	regReq[0] = fetchRequest.GetRegistrationRequest(userName)
 
 	return c.JSON(200, regReq)
 }
@@ -35,7 +33,11 @@ func RegResponse(c echo.Context) error {
 
 //AuthRequest serves auth response
 func AuthRequest(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+	ret := [1]msg.AuthenticationRequest{}
+	fetchRequest := util.FetchRequest{getAppID(), getAllowedAaids()}
+	ret[0] = fetchRequest.GetAuthenticationRequest()
+
+	return c.JSON(ret)
 }
 
 //AuthResponse serves auth response
@@ -60,10 +62,4 @@ func getAllowedAaids() []string {
 		"4746#F816", "53EC#3801"}
 
 	return allowedAaids
-}
-
-func getRegistrationRequest(username, appID string, acceptedAaids []string) msg.RegistrationRequest {
-
-	notary := util.NotaryImpl{}
-	return ops.CreateRegistrationRequest(username, appID, acceptedAaids, notary)
 }

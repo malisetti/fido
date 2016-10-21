@@ -10,11 +10,24 @@ import (
 	"time"
 )
 
-func CreateRegistrationRequest(username string, appID string, acceptedAaids []string, notary crypto.Notary) msg.RegistrationRequest {
-	challenge := generateChallenge()
-	serverDataString := generateServerData(username, challenge, notary)
+type AuthenticationRequestGeneration struct {
+	appID         string
+	acceptedAAIDs []string
+}
 
-	return createRegistrationRequest(username, serverDataString, challenge, appID, acceptedAaids)
+func (authReqGen *AuthenticationRequestGeneration) CreateAuthenticationRequest(notary crypto.Notary) msg.AuthenticationRequest {
+	authRequest := msg.AuthenticationRequest{}
+	header := msg.OperationHeader{}
+	authRequest.Challenge = generateChallenge()
+	header.ServerData = generateServerData(authRequest.Challenge, notary)
+	authRequest.Header = header
+	authRequest.Header.Op = Operation.Auth
+	authRequest.Header.AppID = appId
+	authRequest.Header.UPV = Version{1, 0}
+
+	authRequest.Policy = constructAuthenticationPolicy(authReqGen.acceptedAAIDs)
+
+	return authRequest
 }
 
 func generateChallenge() string {
@@ -24,26 +37,11 @@ func generateChallenge() string {
 	return util.ToWebsafeBase64(base64.StdEncoding.EncodeToString(b))
 }
 
-func generateServerData(username, challenge string, notary crypto.Notary) string {
-	dataToSign := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(int(time.Now().UnixNano()/int64(time.Millisecond))))) + "." + base64.StdEncoding.EncodeToString([]byte(username)) + "." + base64.StdEncoding.EncodeToString([]byte(challenge))
+func generateServerData(challenge string, notary crypto.Notary) string {
+	dataToSign := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(int(time.Now().UnixNano()/int64(time.Millisecond))))) + "." + base64.StdEncoding.EncodeToString([]byte(challenge))
 	signature := notary.Sign(dataToSign)
 
 	return util.ToWebsafeBase64(base64.StdEncoding.EncodeToString([]byte(dataToSign + "." + signature)))
-}
-
-func createRegistrationRequest(username, serverData, challenge, appID string, acceptedAaids []string) msg.RegistrationRequest {
-	regRequest := msg.RegistrationRequest{}
-	header := msg.OperationHeader{}
-	header.ServerData = serverData
-	regRequest.Header = header
-	regRequest.Header.Op = msg.Reg
-	regRequest.Header.AppID = appID
-	regRequest.Header.UPV = msg.Version{1, 0}
-	regRequest.Challenge = msg.ServerChallenge(challenge)
-	regRequest.Policy = constructAuthenticationPolicy(acceptedAaids)
-	regRequest.Username = msg.DOMString(username)
-
-	return regRequest
 }
 
 func constructAuthenticationPolicy(acceptedAaids []string) msg.Policy {

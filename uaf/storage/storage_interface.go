@@ -1,15 +1,11 @@
 package storage
 
-import (
-    "gitlab.pramati.com/seshachalamm/fido/uaf/storage"
-)
-
 type StorageInterface interface {
     StoreServerDataString(username, serverDataString string)
 
 	GetUsername(serverDataString string) string
 
-	Store(records storage.RegistrationRecord[]) DuplicateKeyException, SystemErrorException
+	Store(records RegistrationRecord[]) DuplicateKeyError, SystemError
 
 	ReadRegistrationRecord(key string) RegistrationRecord
 

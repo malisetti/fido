@@ -1,7 +1,12 @@
 package storage
 
+import "errors"
+
 const SerialVersionUID = 1L
 
-func Error() string  {
-    return "System error"    
+type SystemError struct {
+}
+
+func (err *SystemError) Error() error  {
+    return errors.New("System error")    
 }

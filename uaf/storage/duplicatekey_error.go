@@ -1,11 +1,12 @@
 package storage
 
-import (
-    "errors"
-)
+import "errors"
 
 const SerialVersionUID = 1L
 
-func Error() string {
-    return "Duplicate key error"
+type DuplicateKeyError struct {
+}
+
+func (err *DuplicateKeyError) Error() error {
+    return errors.New("Duplicate key error")
 }
