@@ -1,13 +1,13 @@
 package storage
 
 type StorageInterface interface {
-    StoreServerDataString(username, serverDataString string)
+	StoreServerDataString(username, serverDataString string)
 
 	GetUsername(serverDataString string) string
 
-	Store(records RegistrationRecord[]) DuplicateKeyError, SystemError
+	Store(records []RegistrationRecord) (DuplicateKeyError, SystemError)
 
 	ReadRegistrationRecord(key string) RegistrationRecord
 
-	Update(records []RegistrationRecord)    
+	Update(records []RegistrationRecord)
 }

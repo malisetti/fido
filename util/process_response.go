@@ -14,7 +14,7 @@ func ProcessRegResponse(resp msg.RegistrationResponse) []storage.RegistrationRec
 
 	if err != nil {
 		result = [1]storage.RegistrationRecord{}
-		result[0].status = e.Error()
+		result[0].status = err.Error()
 	}
 
 	return result

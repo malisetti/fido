@@ -1,11 +1,12 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/ops"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/util"
-	"net/http"
+	"gitlab.pramati.com/seshachalamm/fido/util"
 )
 
 //RegRequest serves registration request

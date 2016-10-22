@@ -3,29 +3,31 @@ package ops
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"strconv"
+	"time"
+
 	"gitlab.pramati.com/seshachalamm/fido/uaf/crypto"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/util"
-	"strconv"
-	"time"
 )
 
 type AuthenticationRequestGeneration struct {
-	appID         string
-	acceptedAAIDs []string
+	AppID         string
+	AcceptedAAIDs []string
 }
 
 func (authReqGen *AuthenticationRequestGeneration) CreateAuthenticationRequest(notary crypto.Notary) msg.AuthenticationRequest {
 	authRequest := msg.AuthenticationRequest{}
 	header := msg.OperationHeader{}
-	authRequest.Challenge = generateChallenge()
-	header.ServerData = generateServerData(authRequest.Challenge, notary)
+	challenge := GenerateChallenge()
+	authRequest.Challenge = msg.ServerChallenge(challenge)
+	header.ServerData = generateServerData(challenge, notary)
 	authRequest.Header = header
-	authRequest.Header.Op = Operation.Auth
-	authRequest.Header.AppID = appId
-	authRequest.Header.UPV = Version{1, 0}
+	//authRequest.Header.Op = Operation.Auth
+	authRequest.Header.AppID = authReqGen.AppID
+	authRequest.Header.UPV = msg.Version{Major: 1, Minor: 0}
 
-	authRequest.Policy = constructAuthenticationPolicy(authReqGen.acceptedAAIDs)
+	authRequest.Policy = constructAuthenticationPolicy(authReqGen.AcceptedAAIDs)
 
 	return authRequest
 }
