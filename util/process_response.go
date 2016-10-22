@@ -13,8 +13,8 @@ func ProcessRegResponse(resp msg.RegistrationResponse) []storage.RegistrationRec
 	result, err := ops.ProcessResponse(resp, SERVER_DATA_EXPIRY_IN_MS, notary)
 
 	if err != nil {
-		result = [1]storage.RegistrationRecord{}
-		result[0].status = err.Error()
+		result = make([]storage.RegistrationRecord, 1)
+		result[0].Status = err.Error()
 	}
 
 	return result

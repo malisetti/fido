@@ -5,7 +5,6 @@ import (
 
 	"github.com/labstack/echo"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/ops"
 	"gitlab.pramati.com/seshachalamm/fido/util"
 )
 
@@ -16,7 +15,7 @@ func RegRequest(c echo.Context) error {
 	fetchRequest := util.FetchRequest{getAppID(), getAllowedAaids()}
 	regReq[0] = fetchRequest.GetRegistrationRequest(userName)
 
-	return c.JSON(200, regReq)
+	return c.JSON(http.StatusOK, regReq)
 }
 
 //RegResponse serves registration response
@@ -27,9 +26,9 @@ func RegResponse(c echo.Context) error {
 		return err
 	}
 	registrationResponse := fromJSON[0]
-	result := ops.ProcessRegResponse(registrationResponse)
+	result := util.ProcessRegResponse(registrationResponse)
 
-	return c.JSON(result)
+	return c.JSON(http.StatusOK, result)
 }
 
 //AuthRequest serves auth response
@@ -38,7 +37,7 @@ func AuthRequest(c echo.Context) error {
 	fetchRequest := util.FetchRequest{getAppID(), getAllowedAaids()}
 	ret[0] = fetchRequest.GetAuthenticationRequest()
 
-	return c.JSON(ret)
+	return c.JSON(http.StatusOK, ret)
 }
 
 //AuthResponse serves auth response
