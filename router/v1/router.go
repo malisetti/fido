@@ -12,7 +12,7 @@ import (
 func RegRequest(c echo.Context) error {
 	userName := c.Param("username")
 	regReq := [1]msg.RegistrationRequest{}
-	fetchRequest := util.FetchRequest{getAppID(), getAllowedAaids()}
+	fetchRequest := util.FetchRequest{AppID: getAppID(), AllowedAAIDs: getAllowedAaids()}
 	regReq[0] = fetchRequest.GetRegistrationRequest(userName)
 
 	return c.JSON(http.StatusOK, regReq)
@@ -34,7 +34,7 @@ func RegResponse(c echo.Context) error {
 //AuthRequest serves auth response
 func AuthRequest(c echo.Context) error {
 	ret := [1]msg.AuthenticationRequest{}
-	fetchRequest := util.FetchRequest{getAppID(), getAllowedAaids()}
+	fetchRequest := util.FetchRequest{AppID: getAppID(), AllowedAAIDs: getAllowedAaids()}
 	ret[0] = fetchRequest.GetAuthenticationRequest()
 
 	return c.JSON(http.StatusOK, ret)
