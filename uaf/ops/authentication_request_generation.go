@@ -23,7 +23,7 @@ func (authReqGen *AuthenticationRequestGeneration) CreateAuthenticationRequest(n
 	authRequest.Challenge = msg.ServerChallenge(challenge)
 	header.ServerData = generateServerData(challenge, notary)
 	authRequest.Header = header
-	//authRequest.Header.Op = Operation.Auth
+	authRequest.Header.Op = msg.Auth
 	authRequest.Header.AppID = authReqGen.AppID
 	authRequest.Header.UPV = msg.Version{Major: 1, Minor: 0}
 
