@@ -4,8 +4,8 @@ import (
 	"github.com/facebookgo/grace/gracehttp"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
-	rv1 "gitlab.pramati.com/seshachalamm/fido/router/v1"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
+	rv1 "github.com/mseshachalam/fido/router/v1"
+	"github.com/mseshachalam/fido/uaf/msg"
 	"net/http"
 )
 

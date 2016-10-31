@@ -1,8 +1,8 @@
 package util
 
 import (
-	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/ops"
+	"github.com/mseshachalam/fido/uaf/msg"
+	"github.com/mseshachalam/fido/uaf/ops"
 )
 
 type FetchRequest struct {

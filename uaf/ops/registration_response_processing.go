@@ -6,9 +6,9 @@ import (
 	"encoding/gob"
 	"errors"
 
-	"gitlab.pramati.com/seshachalamm/fido/uaf/crypto"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/storage"
+	"github.com/mseshachalam/fido/uaf/crypto"
+	"github.com/mseshachalam/fido/uaf/msg"
+	"github.com/mseshachalam/fido/uaf/storage"
 )
 
 func Verify(response msg.AuthenticationResponse, serverData storage.StorageInterface) {

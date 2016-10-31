@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
-	"gitlab.pramati.com/seshachalamm/fido/util"
+	"github.com/mseshachalam/fido/uaf/msg"
+	"github.com/mseshachalam/fido/util"
 )
 
 //RegRequest serves registration request

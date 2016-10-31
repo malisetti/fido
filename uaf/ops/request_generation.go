@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"gitlab.pramati.com/seshachalamm/fido/uaf/crypto"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
+	"github.com/mseshachalam/fido/uaf/crypto"
+	"github.com/mseshachalam/fido/uaf/msg"
 )
 
 func GenerateChallenge() string {

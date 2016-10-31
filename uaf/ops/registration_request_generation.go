@@ -1,8 +1,8 @@
 package ops
 
 import (
-	"gitlab.pramati.com/seshachalamm/fido/uaf/crypto"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
+	"github.com/mseshachalam/fido/uaf/crypto"
+	"github.com/mseshachalam/fido/uaf/msg"
 )
 
 type RegistrationRequestGeneration struct {

@@ -1,9 +1,9 @@
 package util
 
 import (
-	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/ops"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/storage"
+	"github.com/mseshachalam/fido/uaf/msg"
+	"github.com/mseshachalam/fido/uaf/ops"
+	"github.com/mseshachalam/fido/uaf/storage"
 )
 
 const SERVER_DATA_EXPIRY_IN_MS = 5 * 60 * 1000
