@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/facebookgo/grace/gracehttp"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	rv1 "gitlab.pramati.com/seshachalamm/fido/router/v1"
@@ -30,5 +31,7 @@ func main() {
 	//Deregistration
 	v.POST("/deregRequest", rv1.DeregRequest)
 
-	e.Run(standard.New(":1323"))
+	std := standard.New(":1323")
+	std.SetHandler(e)
+	gracehttp.Serve(std.Server)
 }

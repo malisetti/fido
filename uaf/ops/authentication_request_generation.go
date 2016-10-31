@@ -8,7 +8,6 @@ import (
 
 	"gitlab.pramati.com/seshachalamm/fido/uaf/crypto"
 	"gitlab.pramati.com/seshachalamm/fido/uaf/msg"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/util"
 )
 
 type AuthenticationRequestGeneration struct {
@@ -36,14 +35,14 @@ func generateChallenge() string {
 	b := make([]byte, 32)
 	rand.Read(b)
 
-	return util.ToWebsafeBase64(base64.StdEncoding.EncodeToString(b))
+	return base64.URLEncoding.EncodeToString(b)
 }
 
 func generateServerData(challenge string, notary crypto.Notary) string {
 	dataToSign := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(int(time.Now().UnixNano()/int64(time.Millisecond))))) + "." + base64.StdEncoding.EncodeToString([]byte(challenge))
 	signature := notary.Sign(dataToSign)
 
-	return util.ToWebsafeBase64(base64.StdEncoding.EncodeToString([]byte(dataToSign + "." + signature)))
+	return base64.URLEncoding.EncodeToString([]byte(dataToSign + "." + signature))
 }
 
 func constructAuthenticationPolicy(acceptedAaids []string) msg.Policy {

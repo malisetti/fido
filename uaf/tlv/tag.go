@@ -2,7 +2,6 @@ package tlv
 
 import (
 	"encoding/base64"
-	"gitlab.pramati.com/seshachalamm/fido/uaf/util"
 	"strconv"
 )
 
@@ -21,7 +20,7 @@ func (tag *Tag) String() string {
 		ret = ret + " Tag name: " + strconv.Itoa(tagID)
 	}
 	if tag.Value != nil {
-		ret = ret + " Tag value:" + util.ToWebsafeBase64(base64.StdEncoding.EncodeToString(tag.Value))
+		ret = ret + " Tag value:" + base64.URLEncoding.EncodeToString(tag.Value)
 	}
 
 	return ret
