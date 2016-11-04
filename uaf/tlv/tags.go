@@ -18,9 +18,13 @@ func ToUAFV1TLV() string {
 	return ""
 }
 
+func (tags *Tags) GetTags() map[int]Tag {
+	return tags.Tags
+}
+
 func (tags *Tags) String() string {
 	res := ""
-	for id, tag := range tags.Tags {
+	for _, tag := range tags.Tags {
 		res += ", "
 		res += tag.String()
 	}
