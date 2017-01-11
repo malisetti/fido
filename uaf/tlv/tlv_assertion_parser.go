@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/binary"
+	"fmt"
+	"io"
+	"io/ioutil"
 )
 
 type TlvAssertionParser struct {
@@ -11,32 +14,45 @@ type TlvAssertionParser struct {
 	IsReg               bool
 }
 
-func (tlvAssertParser *TlvAssertionParser) Parse(base64OfRegResponse string) (Tags, error) {
-	b, err := base64.StdEncoding.DecodeString(base64OfRegResponse)
+func (tlvAssertParser *TlvAssertionParser) Parse() (*Tags, error) {
+	b, err := base64.RawURLEncoding.DecodeString(tlvAssertParser.Base64OfRegResponse)
 	if err != nil {
-		tags := Tags{}
+		tags := &Tags{}
 		return tags, err
 	}
 	buf := bytes.NewReader(b)
-	isReg := false
+	isReg := tlvAssertParser.IsReg
 	tags, err := ParseBytes(buf, isReg)
 
 	return tags, err
 }
 
-func ParseBytes(bytes *bytes.Reader, isReg bool) (Tags, error) {
-	ret := Tags{}
+func ParseBytes(bytes *bytes.Reader, isReg bool) (*Tags, error) {
+	ret := &Tags{
+		InTags: map[int]*Tag{},
+	}
 	var err error
-	var t Tag
+	var t *Tag
 
 	for bytes.Len() > 0 {
-		t = Tag{}
+		t = &Tag{}
 
-		id := []byte{}
-		bytes.Read(id)
-		t.ID = int(binary.BigEndian.Uint16(id))
-		length := binary.BigEndian.Uint16(id)
+		id := make([]byte, 2)
+		_, err = bytes.Read(id)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		t.ID = int(binary.LittleEndian.Uint16(id))
+		_, err = bytes.ReadAt(id, 2)
+		if err != nil {
+			fmt.Println(err)
+		}
+		length := binary.LittleEndian.Uint16(id)
 		t.Length = int(length)
+
+		bytes.Seek(5, io.SeekCurrent)
+
 		switch t.ID {
 		case TAG_UAFV1_AUTH_ASSERTION:
 			addTagAndValue(bytes, ret, t)
@@ -61,15 +77,17 @@ func ParseBytes(bytes *bytes.Reader, isReg bool) (Tags, error) {
 			// explicitly verified or not and indicating if there is a
 			// transaction content or not.
 			// 2 - Signature algorithm and encoding format.
+			var n int
 			if isReg {
 				val := make([]byte, 7)
-				_, err = bytes.Read(val)
+				n, err = bytes.Read(val)
 				t.Value = val
 			} else {
 				val := make([]byte, 5)
-				_, err = bytes.Read(val)
+				n, err = bytes.Read(val)
 				t.Value = val
 			}
+			bytes.Seek(int64(n+1), io.SeekCurrent)
 			ret.Add(t)
 		case TAG_AUTHENTICATOR_NONCE:
 			addTagAndValue(bytes, ret, t)
@@ -89,15 +107,17 @@ func ParseBytes(bytes *bytes.Reader, isReg bool) (Tags, error) {
 		case TAG_COUNTERS:
 			// Indicates how many times this authenticator has performed
 			// signatures in the past
+			var n int
 			if isReg {
 				val := make([]byte, 8)
-				_, err = bytes.Read(val)
+				n, err = bytes.Read(val)
 				t.Value = val
 			} else {
 				val := make([]byte, 4)
-				_, err = bytes.Read(val)
+				n, err = bytes.Read(val)
 				t.Value = val
 			}
+			bytes.Seek(int64(n+1), io.SeekCurrent)
 			ret.Add(t)
 		case TAG_PUB_KEY:
 			addTagAndValue(bytes, ret, t)
@@ -111,9 +131,9 @@ func ParseBytes(bytes *bytes.Reader, isReg bool) (Tags, error) {
 			ret.Add(t)
 		default:
 			t.StatusID = UAF_CMD_STATUS_ERR_UNKNOWN
-			val := []byte{}
-			bytes.Read(val)
+			val, _ := ioutil.ReadAll(bytes)
 			t.Value = val
+			bytes.Seek(int64(len(val)+1), io.SeekCurrent)
 			ret.Add(t)
 		}
 	}
@@ -121,9 +141,8 @@ func ParseBytes(bytes *bytes.Reader, isReg bool) (Tags, error) {
 	return ret, err
 }
 
-func addSubTags(isReg bool, ret Tags, t Tag) error {
+func addSubTags(isReg bool, ret *Tags, t *Tag) error {
 	buf := bytes.NewReader(t.Value)
-
 	tags, err := ParseBytes(buf, isReg)
 
 	if err != nil {
@@ -135,10 +154,16 @@ func addSubTags(isReg bool, ret Tags, t Tag) error {
 	return nil
 }
 
-func addTagAndValue(bytes *bytes.Reader, ret Tags, t Tag) {
+func addTagAndValue(bytes *bytes.Reader, ret *Tags, t *Tag) error {
 	val := make([]byte, t.Length)
-	bytes.Read(val)
+	n, err := bytes.Read(val)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
 	t.Value = val
-
+	bytes.Seek(int64(n+1), io.SeekCurrent)
 	ret.Add(t)
+
+	return nil
 }
