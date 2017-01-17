@@ -26,6 +26,27 @@ const (
 	TAG_EXTENSION_DATA              = 0x2E14
 )
 
+var (
+	names = map[int]string{
+		TAG_UAFV1_REG_ASSERTION:         "TAG_UAFV1_REG_ASSERTION",
+		TAG_UAFV1_AUTH_ASSERTION:        "TAG_UAFV1_AUTH_ASSERTION",
+		TAG_UAFV1_KRD:                   "TAG_UAFV1_KRD",
+		TAG_UAFV1_SIGNED_DATA:           "TAG_UAFV1_SIGNED_DATA",
+		TAG_ATTESTATION_BASIC_FULL:      "TAG_ATTESTATION_BASIC_FULL",
+		TAG_ATTESTATION_BASIC_SURROGATE: "TAG_ATTESTATION_BASIC_SURROGATE",
+		TAG_ATTESTATION_CERT:            "TAG_ATTESTATION_CERT",
+		TAG_SIGNATURE:                   "TAG_SIGNATURE",
+		TAG_KEYID:                       "TAG_KEYID",
+		TAG_FINAL_CHALLENGE:             "TAG_FINAL_CHALLENGE",
+		TAG_AAID:                        "TAG_AAID",
+		TAG_PUB_KEY:                     "TAG_PUB_KEY",
+		TAG_COUNTERS:                    "TAG_COUNTERS",
+		TAG_ASSERTION_INFO:              "TAG_ASSERTION_INFO",
+		TAG_AUTHENTICATOR_NONCE:         "TAG_AUTHENTICATOR_NONCE",
+		TAG_TRANSACTION_CONTENT_HASH:    "TAG_TRANSACTION_CONTENT_HASH",
+	}
+)
+
 type TagsEnum struct {
 }
 
@@ -63,4 +84,11 @@ func (tagsEnum *TagsEnum) Get(id int) (int, error) {
 	}
 
 	return 0, errors.New("Tag not found.")
+}
+
+func (tagsEnum *TagsEnum) GetName(id int) string {
+	if val, ok := names[id]; ok {
+		return val
+	}
+	return "TAG_UNKNOWN"
 }
